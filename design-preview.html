@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chronos — сравнение стилей</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 48px 20px;
+      background: #eceef0;
+      color: #20242a;
+      font: 16px/1.5 system-ui, sans-serif;
+    }
+
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .variant { width: min(100%, 308px); }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .preview {
+      display: flex;
+      flex-direction: column;
+      min-height: 318px;
+      padding: 24px 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .brand { font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
+
+    .timer {
+      margin: 36px 0 20px;
+      text-align: center;
+      font-size: 46px;
+      font-weight: var(--timer-weight);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.055em;
+    }
+
+    .start {
+      display: grid;
+      min-height: 44px;
+      place-items: center;
+      border-radius: var(--control-radius);
+      background: var(--action);
+      color: var(--action-text);
+      font-weight: 650;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: auto 0 0;
+      padding: 20px 0 0;
+      list-style: none;
+    }
+
+    .categories li {
+      padding: 5px 9px;
+      border: 1px solid var(--border);
+      border-radius: var(--control-radius);
+      font-size: 13px;
+    }
+
+    .categories .selected {
+      border-color: var(--selected-border);
+      background: var(--selected-bg);
+      color: var(--selected-text);
+      font-weight: 650;
+    }
+
+    .flat {
+      --surface: #f0fdfa;
+      --text: #134e4a;
+      --border: #a7e1d7;
+      --action: #0f766e;
+      --action-text: #fff;
+      --selected-bg: #ccfbf1;
+      --selected-text: #115e59;
+      --selected-border: #5cb5a8;
+      --radius: 16px;
+      --control-radius: 10px;
+      --timer-weight: 750;
+    }
+
+    .minimal {
+      --surface: #fcfbf8;
+      --text: #242321;
+      --border: #d4d0c9;
+      --action: #242321;
+      --action-text: #fff;
+      --selected-bg: #eeece7;
+      --selected-text: #242321;
+      --selected-border: #817b70;
+      --radius: 8px;
+      --control-radius: 4px;
+      --timer-weight: 350;
+    }
+
+    .dark {
+      --surface: #171923;
+      --text: #f3f2fa;
+      --border: #434656;
+      --action: #c4b5fd;
+      --action-text: #251b42;
+      --selected-bg: #302747;
+      --selected-text: #ddd6fe;
+      --selected-border: #a78bfa;
+      --radius: 20px;
+      --control-radius: 999px;
+      --timer-weight: 650;
+    }
+  </style>
+</head>
+<body>
+  <main aria-label="Варианты оформления Chronos">
+    <section class="variant">
+      <h2 lang="en">Flat Design</h2>
+      <div class="preview flat">
+        <div class="brand">Chronos</div>
+        <div class="timer">00:00:00</div>
+        <div class="start">Начать</div>
+        <ul class="categories">
+          <li class="selected">Учёба</li>
+          <li>Работа</li>
+          <li>Отдых</li>
+        </ul>
+      </div>
+    </section>
+    <section class="variant">
+      <h2 lang="en">Modern Minimalism</h2>
+      <div class="preview minimal">
+        <div class="brand">Chronos</div>
+        <div class="timer">00:00:00</div>
+        <div class="start">Начать</div>
+        <ul class="categories">
+          <li class="selected">Учёба</li>
+          <li>Работа</li>
+          <li>Отдых</li>
+        </ul>
+      </div>
+    </section>
+    <section class="variant">
+      <h2 lang="en">Dark Mode</h2>
+      <div class="preview dark">
+        <div class="brand">Chronos</div>
+        <div class="timer">00:00:00</div>
+        <div class="start">Начать</div>
+        <ul class="categories">
+          <li class="selected">Учёба</li>
+          <li>Работа</li>
+          <li>Отдых</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

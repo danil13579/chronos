@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171923">
+  <title>Chronos</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/storage.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/history.js" defer></script>
+  <script src="js/statistics.js" defer></script>
+  <script src="js/categories.js" defer></script>
+  <script src="js/data-transfer.js" defer></script>
+</head>
+<body>
+  <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="icon-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6m3 4 2-2"/></symbol>
+    <symbol id="icon-history" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-14 5h4m-4 3h8"/></symbol>
+    <symbol id="icon-stats" viewBox="0 0 24 24"><path d="M3 3v18h18M8 17v-4m5 4V8m5 9V5"/></symbol>
+    <symbol id="icon-categories" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7Z"/></symbol>
+    <symbol id="icon-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  </svg>
+
+  <div class="app">
+    <main id="content" class="content">
+      <section id="timer" class="screen" aria-labelledby="timer-title">
+        <h1 id="timer-title" class="screen-title" tabindex="-1">Chronos</h1>
+        <div class="timer-card">
+          <span class="current-category"><span class="category-dot" hidden></span><span id="current-category-name">Выберите занятие</span></span>
+          <p class="timer-value">00:00:00</p>
+          <button id="timer-action" class="action primary" type="button" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-play"/></svg><span>Начать</span>
+          </button>
+        </div>
+        <p id="timer-status" class="muted" role="status"></p>
+        <h2 id="category-heading" class="section-title">Занятия</h2>
+        <ul class="category-grid"></ul>
+        <div class="summary">
+          <h2 class="section-title">Сегодня</h2>
+          <p id="today-summary">Пока нет записей</p>
+        </div>
+      </section>
+
+      <section id="history" class="screen" aria-labelledby="history-title" hidden>
+        <h1 id="history-title" class="screen-title" tabindex="-1">История</h1>
+        <div class="history-date">
+          <button type="button" id="history-previous" aria-label="Предыдущий день">‹</button>
+          <label class="history-calendar"><span class="visually-hidden">Выбранный день</span><input id="history-date" type="date" required></label>
+          <button type="button" id="history-next" aria-label="Следующий день">›</button>
+          <button type="button" id="history-today">Сегодня</button>
+        </div>
+        <div class="history-total" role="status"><span>Учтено за день</span><strong id="history-total">00:00:00</strong></div>
+        <ul id="history-list" class="history-list" aria-label="Записи за выбранный день"></ul>
+        <div id="history-empty" class="panel empty">
+          <span class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg></span>
+          <h2 class="section-title">За этот день пока нет записей</h2>
+        </div>
+        <p id="history-status" class="muted" role="status"></p>
+        <button id="history-add" class="action primary" type="button">
+          <svg class="icon" aria-hidden="true"><use href="#icon-plus"/></svg>Добавить запись
+        </button>
+      </section>
+
+      <section id="statistics" class="screen" aria-labelledby="statistics-title" hidden>
+        <h1 id="statistics-title" class="screen-title" tabindex="-1">Статистика</h1>
+        <div class="stats-period" role="group" aria-label="Период статистики">
+          <button type="button" data-stats-mode="day" aria-pressed="true">День</button>
+          <button type="button" data-stats-mode="week" aria-pressed="false">Неделя</button>
+        </div>
+        <div class="stats-date">
+          <button id="stats-previous" type="button" aria-label="Предыдущий период">‹</button>
+          <p id="stats-range" aria-live="polite"></p>
+          <label class="stats-calendar">
+            <svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg>
+            <input id="stats-date" type="date" aria-label="Выбрать дату статистики">
+          </label>
+          <button id="stats-next" type="button" aria-label="Следующий период">›</button>
+        </div>
+        <p id="stats-empty" class="panel" role="status" hidden></p>
+        <div id="stats-dashboard" hidden>
+          <dl class="stats-metrics">
+            <div class="stats-metric stats-metric-main"><dt>Учтено времени</dt><dd id="stats-total"></dd></div>
+            <div class="stats-metric" id="stats-average-card" hidden><dt>В среднем за день</dt><dd id="stats-average"></dd></div>
+            <div class="stats-metric"><dt>Записей</dt><dd id="stats-count"></dd></div>
+          </dl>
+          <section class="panel stats-panel" aria-labelledby="stats-categories-title">
+            <h2 id="stats-categories-title" class="section-title">Время по категориям</h2>
+            <div class="stats-ring" aria-hidden="true"><div><strong id="stats-ring-total"></strong><span>Всего учтено</span></div></div>
+            <ul id="stats-legend" class="stats-legend"></ul>
+          </section>
+          <div id="stats-week-charts" hidden>
+            <section class="panel stats-panel" aria-labelledby="stats-bars-title">
+              <h2 id="stats-bars-title" class="section-title">Активность по дням</h2>
+              <ul id="stats-bars" class="stats-bars"></ul>
+            </section>
+            <section class="panel stats-panel" aria-labelledby="stats-trend-title">
+              <h2 id="stats-trend-title" class="section-title">Динамика недели</h2>
+              <div id="stats-trend"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="categories" class="screen" aria-labelledby="categories-title" hidden>
+        <h1 id="categories-title" class="screen-title" tabindex="-1">Категории</h1>
+        <ul id="category-list" class="category-list panel" aria-label="Список категорий" hidden></ul>
+        <p id="category-empty" class="panel category-empty" hidden>Категорий пока нет.</p>
+        <p id="category-status" class="muted" role="status"></p>
+        <button id="category-add" class="action secondary" type="button" disabled>
+          <svg class="icon" aria-hidden="true"><use href="#icon-plus"/></svg>Добавить категорию
+        </button>
+        <section aria-labelledby="data-management-title">
+          <h2 id="data-management-title" class="section-title data-title">Управление данными</h2>
+          <div class="panel data-actions">
+            <button id="data-export" type="button">Экспорт данных</button>
+            <button id="data-import" type="button">Импорт данных</button>
+          </div>
+          <input id="data-file" type="file" accept=".json,application/json" hidden>
+          <p id="data-status" class="muted data-status" role="status"></p>
+        </section>
+      </section>
+    </main>
+
+    <nav class="navigation" aria-label="Основная навигация">
+      <a href="#timer" aria-current="page">
+        <span class="nav-icon"><svg class="icon" aria-hidden="true"><use href="#icon-timer"/></svg></span>
+        Таймер
+      </a>
+      <a href="#history">
+        <span class="nav-icon"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg></span>
+        История
+      </a>
+      <a href="#statistics">
+        <span class="nav-icon"><svg class="icon" aria-hidden="true"><use href="#icon-stats"/></svg></span>
+        Статистика
+      </a>
+      <a href="#categories">
+        <span class="nav-icon"><svg class="icon" aria-hidden="true"><use href="#icon-categories"/></svg></span>
+        Категории
+      </a>
+    </nav>
+  </div>
+
+  <dialog id="history-editor" class="history-dialog" aria-labelledby="history-editor-title">
+    <form id="history-form" class="history-form">
+      <h2 id="history-editor-title">Запись</h2>
+      <label>Категория<select id="history-category" required></select></label>
+      <label>Начало<input id="history-start" type="datetime-local" step="any" required></label>
+      <label>Окончание<input id="history-end" type="datetime-local" step="any" required aria-describedby="history-error"></label>
+      <p id="history-error" class="history-error" role="alert"></p>
+      <button type="submit" class="action primary">Сохранить</button>
+      <button type="button" id="history-cancel" class="action secondary">Отмена</button>
+      <button type="button" id="history-delete" class="action history-danger" hidden>Удалить запись</button>
+    </form>
+  </dialog>
+
+  <dialog id="history-confirm" class="history-dialog" aria-labelledby="history-confirm-title">
+    <form id="history-delete-form" class="history-form">
+      <h2 id="history-confirm-title">Удалить запись?</h2>
+      <p>Запись исчезнет из истории.</p>
+      <p id="history-delete-error" class="history-error" role="alert"></p>
+      <button id="history-keep" type="button" class="action secondary" autofocus>Отмена</button>
+      <button type="submit" class="action history-danger">Удалить</button>
+    </form>
+  </dialog>
+  <dialog id="category-editor" class="history-dialog" aria-labelledby="category-editor-title">
+    <form id="category-form" class="history-form" novalidate>
+      <h2 id="category-editor-title">Категория</h2>
+      <label>Название<input id="category-name" type="text" maxlength="40" required aria-describedby="category-error"></label>
+      <fieldset class="category-colors">
+        <legend>Цвет</legend>
+        <div id="category-palette"></div>
+      </fieldset>
+      <p id="category-error" class="history-error" role="alert"></p>
+      <button class="action primary" type="submit">Сохранить</button>
+      <button id="category-cancel" class="action secondary" type="button">Отмена</button>
+      <button id="category-delete" class="action history-danger" type="button" aria-describedby="category-delete-reason" hidden>Удалить категорию</button>
+      <p id="category-delete-reason" class="muted" hidden></p>
+    </form>
+  </dialog>
+  <dialog id="category-confirm" class="history-dialog" aria-labelledby="category-confirm-title">
+    <form id="category-delete-form" class="history-form">
+      <h2 id="category-confirm-title">Удалить категорию?</h2>
+      <p id="category-confirm-name"></p>
+      <p id="category-confirm-error" class="history-error" role="alert"></p>
+      <button id="category-keep" class="action secondary" type="button" autofocus>Отмена</button>
+      <button class="action history-danger" type="submit">Удалить</button>
+    </form>
+  </dialog>
+  <dialog id="data-confirm" class="history-dialog" aria-labelledby="data-confirm-title" aria-describedby="data-confirm-details">
+    <form id="data-confirm-form" class="history-form">
+      <h2 id="data-confirm-title">Импортировать данные?</h2>
+      <p id="data-confirm-details">Существующие категории и записи будут полностью заменены. Активный таймер будет сброшен.</p>
+      <p id="data-import-error" class="history-error" role="alert"></p>
+      <button id="data-cancel" class="action secondary" type="button" autofocus>Отмена</button>
+      <button class="action primary" type="submit">Заменить данные</button>
+    </form>
+  </dialog>
+</body>
+</html>
