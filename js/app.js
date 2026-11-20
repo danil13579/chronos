@@ -36,6 +36,10 @@ const categoryDot = document.querySelector(".current-category .category-dot");
 const categoryHeading = document.querySelector("#category-heading");
 const timerStatus = document.querySelector("#timer-status");
 const todaySummary = document.querySelector("#today-summary");
+const todayDate = document.querySelector("#today-date");
+const todayDateLabel = new Intl.DateTimeFormat("ru-RU", {
+  weekday: "long", day: "numeric", month: "long",
+});
 
 let timerState;
 let selectedCategory;
@@ -80,6 +84,13 @@ function renderClock(now = Date.now()) {
 function renderToday(now = Date.now()) {
   const today = localMidnight(now);
   const tomorrow = localMidnight(now, 1);
+  if (today !== lastSummaryDay) {
+    const date = new Date(today);
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    todayDate.dateTime = `${date.getFullYear()}-${month}-${day}`;
+    todayDate.textContent = todayDateLabel.format(date);
+  }
   lastSummaryDay = today;
   const total = timerState.activities.reduce((sum, activity) => {
     const start = Math.max(today, Date.parse(activity.startAt));

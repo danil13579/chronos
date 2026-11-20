@@ -4,7 +4,7 @@
   const calendar = byId("stats-date");
   const modes = [...screen.querySelectorAll("[data-stats-mode]")];
   const weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
-  const barColors = ["#a78bfa", "#7dd3fc", "#5eead4", "#86efac", "#fcd34d", "#fdba74", "#f0abfc"];
+  const weekdayColors = ["#a296b6", "#bc9d73", "#8cabb4", "#8295b2", "#b88b9b", "#9fa883", "#b3917d"];
   const dateLabel = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric" });
   const shortDate = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short" });
   const compactNumber = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 1 });
@@ -55,7 +55,7 @@
     let elapsed = 0;
     const entries = [...data.categories].sort((a, b) => b[1] - a[1]);
     for (const [id, time] of entries) {
-      const { name, color } = categoryColors.get(id) ?? { name: "Категория недоступна", color: "var(--other)" };
+      const { name, color } = categoryColors.get(id) ?? { name: "Категория недоступна", color: "var(--subtle)" };
       const fraction = time / data.total;
       const dot = element("span", "category-dot");
       dot.style.setProperty("--category-color", color);
@@ -104,7 +104,7 @@
       const track = element("span", "stats-bar-track");
       const fill = element("span", "stats-bar-fill");
       fill.style.height = `${ratio * 100}%`;
-      fill.style.backgroundColor = barColors[index];
+      fill.style.backgroundColor = weekdayColors[index];
       track.setAttribute("aria-hidden", "true");
       track.append(fill);
       column.append(value, track, element("span", "muted", weekdays[index]),
@@ -163,14 +163,20 @@
     if (weekly) renderWeek(data.totals);
   }
 
-  for (const button of modes) button.addEventListener("click", () => {
-    mode = button.dataset.statsMode;
+  function renderSelectedPeriod() {
     render();
+    if (!screen.hidden) byId("stats-dashboard").scrollTop = 0;
+  }
+
+  for (const button of modes) button.addEventListener("click", () => {
+    if (mode === button.dataset.statsMode) return;
+    mode = button.dataset.statsMode;
+    renderSelectedPeriod();
   });
 
   function move(direction) {
     selected = localMidnight(selected, direction * (mode === "week" ? 7 : 1));
-    render();
+    renderSelectedPeriod();
   }
 
   byId("stats-previous").addEventListener("click", () => move(-1));
@@ -178,10 +184,10 @@
   calendar.addEventListener("change", () => {
     const date = Date.parse(`${calendar.value}T12:00`);
     if (Number.isFinite(date)) selected = localMidnight(date);
-    render();
+    renderSelectedPeriod();
   });
 
-  window.addEventListener("hashchange", render);
+  window.addEventListener("hashchange", renderSelectedPeriod);
   chronosStorage.subscribe(render, { includeLocal: true });
   render();
 })();

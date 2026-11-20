@@ -1,38 +1,36 @@
 const chronosStorage = (() => {
   const key = "chronos.state";
-  const palette = {
-    red: ["Красный", "#FF414D"],
-    orange: ["Оранжевый", "#FF8500"],
-    yellow: ["Жёлтый", "#FFD600"],
-    lime: ["Лаймовый", "#A7E600"],
-    green: ["Зелёный", "#00D45C"],
-    cyan: ["Голубой", "#00CFFF"],
-    blue: ["Синий", "#4080FF"],
-    violet: ["Фиолетовый", "#A75BFF"],
-    magenta: ["Малиновый", "#FF35A3"],
-    gray: ["Серый", "#9098A3"],
-  };
   const defaultCategories = [
-    { id: "study", name: "Учёба", color: palette.violet[1] },
-    { id: "work", name: "Работа", color: palette.blue[1] },
-    { id: "rest", name: "Отдых", color: palette.green[1] },
-    { id: "sleep", name: "Сон", color: palette.magenta[1] },
-    { id: "sport", name: "Спорт", color: palette.orange[1] },
-    { id: "other", name: "Другое", color: palette.gray[1] },
+    { id: "study", name: "Учёба", color: "#C4A7E7" },
+    { id: "work", name: "Работа", color: "#F6C177" },
+    { id: "rest", name: "Отдых", color: "#9CCFD8" },
+    { id: "sleep", name: "Сон", color: "#31748F" },
+    { id: "sport", name: "Спорт", color: "#EB6F92" },
+    { id: "other", name: "Другое", color: "#6E6A86" },
   ];
+  const paletteNames = ["Лавандовый", "Золотистый", "Ледяной", "Сине-зелёный", "Розовый", "Серо-лиловый"];
+  const paletteVersion = 3;
+  const previousDefaults = new Map([
+    ["study", "#A75BFF"], ["work", "#4080FF"], ["rest", "#00D45C"],
+    ["sleep", "#FF35A3"], ["sport", "#FF8500"], ["other", "#9098A3"],
+  ]);
   const legacyColors = {
-    "#A78BFA": "violet", "#7DD3FC": "blue", "#5EEAD4": "cyan",
-    "#86EFAC": "green", "#BEF264": "lime", "#FCD34D": "yellow",
-    "#FDBA74": "orange", "#FCA5A5": "red", "#FDA4AF": "magenta",
-    "#F0ABFC": "magenta", "#A5B4FC": "blue", "#A6AFC2": "gray",
+    "#A78BFA": "#A75BFF", "#7DD3FC": "#4080FF", "#5EEAD4": "#00CFFF",
+    "#86EFAC": "#00D45C", "#BEF264": "#A7E600", "#FCD34D": "#FFD600",
+    "#FDBA74": "#FF8500", "#FCA5A5": "#FF414D", "#FDA4AF": "#FF35A3",
+    "#F0ABFC": "#FF35A3", "#A5B4FC": "#4080FF", "#A6AFC2": "#9098A3",
   };
 
   function load() {
     const saved = localStorage.getItem(key);
     const state = saved === null ? { activeTimer: null, activities: [] } : JSON.parse(saved);
     const categories = (state.categories ?? defaultCategories).map((category) => {
-      const legacyColor = state.categoryPaletteVersion === 2 ? undefined : legacyColors[category.color.toUpperCase()];
-      return { ...category, color: palette[legacyColor]?.[1] ?? category.color };
+      if (state.categoryPaletteVersion >= paletteVersion) return { ...category };
+      const oldColor = category.color.toUpperCase();
+      const color = state.categoryPaletteVersion === 2 ? oldColor : legacyColors[oldColor] ?? oldColor;
+      const matchingDefault = previousDefaults.get(category.id) === color
+        ? defaultCategories.find(({ id }) => id === category.id) : undefined;
+      return { ...category, color: matchingDefault?.color ?? color };
     });
     return { ...state, categories };
   }
@@ -42,7 +40,7 @@ const chronosStorage = (() => {
       const current = load();
       const next = change(current);
       if (next !== current) {
-        localStorage.setItem(key, JSON.stringify({ ...next, categoryPaletteVersion: 2 }));
+        localStorage.setItem(key, JSON.stringify({ ...next, categoryPaletteVersion: paletteVersion }));
         window.dispatchEvent(new Event("chronos:storage"));
       }
       return next;
@@ -61,5 +59,6 @@ const chronosStorage = (() => {
     });
   }
 
-  return { load, update, subscribe, categoryPalette: Object.values(palette) };
+  const categoryPalette = defaultCategories.map(({ color }, index) => [paletteNames[index], color]);
+  return { load, update, subscribe, categoryPalette };
 })();

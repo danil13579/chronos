@@ -73,7 +73,7 @@
       button.dataset.activityId = record.id;
       const activityCategory = categories.get(record.categoryId);
       dot.className = "category-dot";
-      dot.style.setProperty("--category-color", activityCategory?.color ?? "var(--other)");
+      dot.style.setProperty("--category-color", activityCategory?.color ?? "var(--subtle)");
       name.textContent = activityCategory?.name ?? "Категория недоступна";
       interval.className = "muted";
       interval.textContent = `${clock.format(start)} — ${end === tomorrow ? "24:00:00" : clock.format(end)}`;
