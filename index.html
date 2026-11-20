@@ -60,7 +60,10 @@
         <div class="history-controls">
           <div class="history-date">
             <button type="button" id="history-previous" aria-label="Предыдущий день">‹</button>
-            <label class="history-calendar"><span class="visually-hidden">Выбранный день</span><input id="history-date" type="date" required></label>
+            <label class="history-calendar">
+              <span id="history-date-label" aria-hidden="true"></span>
+              <input id="history-date" type="date" aria-label="Выбранный день" required>
+            </label>
             <button type="button" id="history-next" aria-label="Следующий день">›</button>
             <button type="button" id="history-today">Сегодня</button>
           </div>
@@ -129,6 +132,7 @@
           <input id="data-file" type="file" accept=".json,application/json" hidden>
           <p id="data-status" class="muted data-status" role="status"></p>
         </section>
+        <p class="app-version">Версия 1.0.1</p>
       </section>
     </main>
 

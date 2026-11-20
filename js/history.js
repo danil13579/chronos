@@ -1,6 +1,10 @@
 (() => {
   const byId = (id) => document.getElementById(id);
   const dateInput = byId("history-date");
+  const dateLabel = byId("history-date-label");
+  const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+  });
   const list = byId("history-list");
   const add = byId("history-add");
   const status = byId("history-status");
@@ -36,6 +40,7 @@
 
   function renderHistory(message = "") {
     dateInput.value = dateValue(day);
+    dateLabel.textContent = dateFormatter.format(day);
     list.replaceChildren();
     let records;
     try {

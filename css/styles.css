@@ -85,7 +85,13 @@ button { font: inherit; }
   background: var(--surface);
 }
 
-#timer:not([hidden]), #history:not([hidden]) {
+#timer:not([hidden]) {
+  display: grid;
+  height: 100%;
+  grid-template-rows: auto minmax(min-content, 1fr) auto;
+}
+
+#history:not([hidden]), #categories:not([hidden]) {
   display: flex;
   min-height: 100%;
   flex-direction: column;
@@ -93,7 +99,6 @@ button { font: inherit; }
 
 .timer-display {
   display: grid;
-  flex: 1;
   place-content: center;
   justify-items: center;
   padding-block: 24px;
@@ -218,7 +223,7 @@ button { font: inherit; }
   margin-bottom: 16px;
 }
 
-.history-date button, .history-date input {
+.history-date button, .history-calendar {
   min-height: var(--target);
   border: 1px solid var(--border);
   border-radius: var(--control-radius);
@@ -228,7 +233,35 @@ button { font: inherit; }
 
 .history-date button { padding-inline: 8px; }
 #history-previous, #history-next { font-size: 24px; }
-.history-date input { width: 100%; min-width: 0; padding-inline: 8px; font: inherit; }
+.history-calendar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding-inline: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.history-calendar:focus-within { outline: 2px solid var(--text); outline-offset: 2px; }
+.history-calendar input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+.history-calendar input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 .history-total { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
 .history-total strong, .history-duration { font-variant-numeric: tabular-nums; }
 .history-list { display: grid; gap: 8px; }
@@ -527,6 +560,14 @@ button { font: inherit; }
 .data-actions button:enabled:active { background: var(--selected); }
 .data-actions button:focus-visible { outline-offset: -3px; }
 .data-status:not(:empty) { margin-top: 8px; }
+
+.app-version {
+  margin-top: auto;
+  padding-top: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
 
 .navigation {
   display: grid;
